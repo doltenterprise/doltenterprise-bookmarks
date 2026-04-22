@@ -32,7 +32,7 @@ jobs:
       - run: npm ci
       - name: Run tests
         run: |
-          node -e "const app = require('./app'); if (typeof app !== 'function') throw new Error('App failed to export'); console.log('Connectivity test passed');"
+          node -e "const app = require('./app'); if (typeof app !== 'function') throw new Error('App failed to export'); console.log('Connectivity test passed'); process.exit(0);"
 
   build-sea:
     needs: [lint, test]

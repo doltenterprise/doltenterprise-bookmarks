@@ -16,7 +16,9 @@ async function getDatabase(dbPath) {
       CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
-        password TEXT
+        password TEXT,
+        is_admin INTEGER DEFAULT 0,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
       );
       
       CREATE TABLE categories (

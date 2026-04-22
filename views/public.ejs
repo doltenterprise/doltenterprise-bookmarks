@@ -1,76 +1,146 @@
 <%- include('partials/header') %>
 
 <style>
-    .public-btn {
-        white-space: normal !important;
-        word-wrap: break-word !important;
-        overflow-wrap: break-word !important;
-        padding: 15px 20px !important;
-        font-weight: 500 !important;
-        border-width: 2px !important;
-        transition: transform 0.2s;
+    body {
+        background: #fdfdfd;
+        color: #1e293b;
     }
-    .public-btn:hover { transform: scale(1.02); }
-    @media (max-width: 767px) {
-        .mobile-mt { margin-top: 40px !important; }
+    .public-container {
+        padding: 40px 20px;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .public-content {
+        width: 100%;
+        max-width: 580px;
+        margin: 0 auto;
+    }
+    .public-btn {
+        background: #ffffff !important;
+        border: 2px solid #e2e8f0 !important;
+        color: #1e293b !important;
+        border-radius: 12px !important;
+        padding: 18px 24px !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        margin-bottom: 16px !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+        text-align: center !important;
+        display: block !important;
+        width: 100% !important;
+        text-decoration: none !important;
+    }
+    .public-btn:hover {
+        transform: translateY(-2px);
+        background: #f8fafc !important;
+        border-color: #cbd5e1 !important;
+        box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1) !important;
+    }
+    .social-icons {
+        margin-top: 32px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    .social-btn {
+        color: #64748b;
+        transition: color 0.2s;
+        padding: 10px;
+    }
+    .social-btn:hover {
+        color: #1e293b;
+    }
+    .profile-header {
+        text-align: center;
+        margin-bottom: 48px;
+    }
+    .profile-logo {
+        max-width: 180px;
+        max-height: 80px;
+        height: auto;
+        object-fit: contain;
+        margin: 0 auto 24px;
+        display: block;
+    }
+    .profile-name {
+        font-weight: 800;
+        font-size: 24px;
+        margin-bottom: 4px;
+        color: #0f172a;
+    }
+    .profile-username {
+        color: #64748b;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    @media (max-width: 480px) {
+        .public-container {
+            padding: 40px 16px;
+        }
+        .profile-name { font-size: 20px; }
+        .public-btn { font-size: 15px; padding: 15px 20px !important; }
     }
 </style>
 
-<div class="container-fluid" style="padding: 0 15px;">
-    <div class="row">
-        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4 text-center">
-            
-            <div class="mobile-mt" style="margin-top: 80px; margin-bottom: 50px;">
-                <% if (locals.config && locals.config.logoUrl) { %>
-                    <img src="<%= config.logoUrl %>" alt="Logo" style="max-height: 80px; margin-bottom: 20px; border-radius: 8px;">
-                <% } %>
-                <h1 style="font-weight: bold; margin-bottom: 5px;"><%= category.name %></h1>
-                <p class="text-muted" style="font-size: 18px;">@<%= category.username %></p>
-            </div>
-
-            <div style="margin-bottom: 30px;">
-                <% 
-                    const socialDomains = ['twitter.com', 'x.com', 'instagram.com', 'facebook.com', 'linkedin.com', 'github.com', 'youtube.com', 'twitch.tv', 'discord.gg', 'discord.com', 'reddit.com', 'medium.com'];
-                    const socials = bookmarks.filter(b => socialDomains.some(domain => b.url.toLowerCase().includes(domain)));
-                    const regular = bookmarks.filter(b => !socialDomains.some(domain => b.url.toLowerCase().includes(domain)));
-                %>
-
-                <% regular.forEach(function(b) { %>
-                    <div style="margin-bottom: 15px;">
-                        <a href="<%= b.url %>" target="_blank" class="btn btn-default btn-block btn-lg public-btn">
-                            <%= b.title %>
-                        </a>
-                    </div>
-                <% }) %>
-            </div>
-
-            <div style="margin-top: 40px;">
-                <% socials.forEach(function(s) { %>
-                    <% 
-                        let icon = 'fa-link';
-                        const url = s.url.toLowerCase();
-                        if (url.includes('twitter.com') || url.includes('x.com')) icon = 'fa-twitter';
-                        else if (url.includes('instagram.com')) icon = 'fa-instagram';
-                        else if (url.includes('facebook.com')) icon = 'fa-facebook';
-                        else if (url.includes('linkedin.com')) icon = 'fa-linkedin';
-                        else if (url.includes('github.com')) icon = 'fa-github';
-                        else if (url.includes('youtube.com')) icon = 'fa-youtube';
-                        else if (url.includes('twitch.tv')) icon = 'fa-twitch';
-                        else if (url.includes('discord')) icon = 'fa-comments';
-                        else if (url.includes('reddit')) icon = 'fa-reddit';
-                        else if (url.includes('medium')) icon = 'fa-medium';
-                    %>
-                    <a href="<%= s.url %>" target="_blank" class="btn btn-link btn-lg" style="color: #333;">
-                        <i class="fa <%= icon %> fa-2x"></i>
-                    </a>
-                <% }) %>
-            </div>
-
-            <div style="margin-top: 100px; margin-bottom: 50px;">
-                <p class="text-muted small">Powered by <a href="/" class="text-muted">LinkBoard</a></p>
-            </div>
-
+<div class="public-container">
+    <div class="public-content">
+        
+        <div class="profile-header">
+            <% if (locals.config && locals.config.logoUrl) { %>
+                <img src="<%= config.logoUrl %>" alt="Logo" class="profile-logo">
+            <% } %>
+            <h1 class="profile-name"><%= category.name %></h1>
+            <p class="profile-username">@<%= category.username %></p>
         </div>
+
+        <div class="links-section">
+            <% 
+                const socialDomains = ['twitter.com', 'x.com', 'instagram.com', 'facebook.com', 'linkedin.com', 'github.com', 'youtube.com', 'twitch.tv', 'discord.gg', 'discord.com', 'reddit.com', 'medium.com', 't.me', 'web.whatsapp.com', 'wa.me'];
+                const socials = bookmarks.filter(b => socialDomains.some(domain => b.url.toLowerCase().includes(domain)));
+                const regular = bookmarks.filter(b => !socialDomains.some(domain => b.url.toLowerCase().includes(domain)));
+            %>
+
+            <% regular.forEach(function(b) { %>
+                <a href="<%= b.url %>" target="_blank" class="public-btn">
+                    <%= b.title %>
+                </a>
+            <% }) %>
+        </div>
+
+        <% if (socials.length > 0) { %>
+        <div class="social-icons">
+            <% socials.forEach(function(s) { %>
+                <% 
+                    let icon = 'fa-link';
+                    const url = s.url.toLowerCase();
+                    if (url.includes('twitter.com') || url.includes('x.com')) icon = 'fa-twitter';
+                    else if (url.includes('instagram.com')) icon = 'fa-instagram';
+                    else if (url.includes('facebook.com')) icon = 'fa-facebook';
+                    else if (url.includes('linkedin.com')) icon = 'fa-linkedin';
+                    else if (url.includes('github.com')) icon = 'fa-github';
+                    else if (url.includes('youtube.com')) icon = 'fa-youtube';
+                    else if (url.includes('twitch.tv')) icon = 'fa-twitch';
+                    else if (url.includes('discord')) icon = 'fa-comments';
+                    else if (url.includes('reddit')) icon = 'fa-reddit';
+                    else if (url.includes('medium')) icon = 'fa-medium';
+                    else if (url.includes('t.me')) icon = 'fa-telegram';
+                    else if (url.includes('wa.me') || url.includes('whatsapp')) icon = 'fa-whatsapp';
+                %>
+                <a href="<%= s.url %>" target="_blank" class="social-btn" title="<%= s.title %>">
+                    <i class="fa <%= icon %> fa-2x"></i>
+                </a>
+            <% }) %>
+        </div>
+        <% } %>
+
+        <div style="margin-top: 60px; margin-bottom: 40px; text-align: center;">
+            <p class="text-muted small" style="color: #94a3b8;">Powered by <a href="/" style="color: #64748b; font-weight: 600;">LinkBoard</a></p>
+        </div>
+
     </div>
 </div>
 

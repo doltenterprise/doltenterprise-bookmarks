@@ -7,17 +7,17 @@ Welcome to **LinkBoard**, the premium self-hosted bookmarks manager.
 ### Binary (Recommended)
 LinkBoard is distributed as a single executable binary. This means you don't need Node.js installed on your server.
 
-1. Download the binary for your OS from the [Releases](https://github.com/# TODO: replace with your GitHub username/linkboard/releases) page.
+1. Download the binary for your OS from the [Releases](https://github.com/doltenterprise/doltenterprise-bookmarks/releases) page.
 2. Grant execution permissions: `chmod +x linkboard`
 3. Run it: `./linkboard`
 
 ### Using NPM
 If you prefer running from source:
 ```bash
-git clone https://github.com/# TODO: replace with your GitHub username/linkboard
-cd linkboard
+git clone https://github.com/doltenterprise/doltenterprise-bookmarks
+cd doltenterprise-bookmarks
 npm install
-npm start
+npm start`
 ```
 
 ## First Steps

@@ -9,7 +9,10 @@
     "dev": "nodemon app.js",
     "test": "node --test",
     "lint": "npx eslint .",
-    "build-sea": "node scripts/build-sea.js"
+    "build-sea": "node scripts/build-sea.js",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
   },
   "keywords": [
     "bookmarks",

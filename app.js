@@ -26,6 +26,7 @@ const PORT = process.env.PORT || 3000;
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/docs', express.static(path.join(__dirname, 'docs/.vitepress/dist')));
 app.use(express.urlencoded({ extended: true }));
 
 // Setup Check Middleware
@@ -53,8 +54,13 @@ const saveDb = () => persist(db, config.databasePath);
     // Migration for existing databases
     try {
       db.run("ALTER TABLE users ADD COLUMN is_admin INTEGER DEFAULT 0");
-      saveDb();
     } catch (e) {}
+    try {
+      db.run("ALTER TABLE users ADD COLUMN created_at DATETIME");
+      db.run("UPDATE users SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL");
+    } catch (e) {}
+    saveDb();
+
     // Ensure at least one admin exists (the first user)
     const adminCheck = db.prepare("SELECT COUNT(*) as count FROM users WHERE is_admin = 1");
     if (adminCheck.step() && adminCheck.getAsObject().count === 0) {
@@ -63,7 +69,7 @@ const saveDb = () => persist(db, config.databasePath);
     }
     adminCheck.free();
   }
-})();
+})().catch(err => console.error('Database initialization failed:', err));
 
 app.use((req, res, next) => {
   if (req.session.userId && req.session.isAdmin === undefined) {
@@ -197,6 +203,42 @@ app.post('/users/toggle-admin/:id', isAdmin, (req, res) => {
   db.run("UPDATE users SET is_admin = 1 - is_admin WHERE id = ?", [req.params.id]);
   saveDb();
   res.redirect('/profile');
+});
+
+app.post('/users/edit/:id', isAdmin, async (req, res) => {
+  const { username, password } = req.body;
+  const userId = req.params.id;
+
+  try {
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      db.run("UPDATE users SET username = ?, password = ? WHERE id = ?", [username, hashedPassword, userId]);
+    } else {
+      db.run("UPDATE users SET username = ? WHERE id = ?", [username, userId]);
+    }
+    saveDb();
+    res.redirect('/profile');
+  } catch (e) {
+    res.status(500).send('Error updating user: ' + e.message);
+  }
+});
+
+app.post('/profile/update-password', isAuthenticated, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const userId = req.session.userId;
+
+  const stmt = db.prepare("SELECT password FROM users WHERE id = ?");
+  stmt.bind([userId]);
+  const user = stmt.step() ? stmt.getAsObject() : null;
+  stmt.free();
+
+  if (user && await bcrypt.compare(currentPassword, user.password)) {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    db.run("UPDATE users SET password = ? WHERE id = ?", [hashedPassword, userId]);
+    saveDb();
+    return res.redirect('/profile?success=password');
+  }
+  res.redirect('/profile?error=invalid_password');
 });
 
 app.post('/config/update', isAdmin, (req, res) => {
@@ -352,14 +394,15 @@ app.get('/profile', isAuthenticated, (req, res) => {
 
   let users = [];
   if (req.session.isAdmin) {
-    const usersStmt = db.prepare("SELECT id, username, is_admin FROM users");
+    const usersStmt = db.prepare("SELECT id, username, is_admin, created_at FROM users");
     while (usersStmt.step()) users.push(usersStmt.getAsObject());
     usersStmt.free();
   }
 
   res.render('profile', { 
     stats: { bookmarks: bookmarkCount, categories: categoryCount },
-    users
+    users,
+    query: req.query
   });
 });
 
@@ -427,6 +470,8 @@ app.use((err, req, res, next) => {
   res.status(500).render('500', { error: err.message });
 });
 
-app.listen(PORT, () => console.log(`LinkBoard running on http://localhost:${PORT}`));
+if (require.main === module) {
+  app.listen(PORT, () => console.log(`LinkBoard running on http://localhost:${PORT}`));
+}
 
 module.exports = app; // For tests
