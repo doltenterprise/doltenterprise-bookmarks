@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= locals.config ? locals.config.siteName : 'LinkBoard' %> - Dolt Enterprise Bookmarks</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <% if (!locals.hideNavbar) { %>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/" style="display: flex; align-items: center; padding-top: 13px; padding-bottom: 13px;">
+                    <% if (locals.config && locals.config.logoUrl) { %>
+                        <img src="<%= config.logoUrl %>" alt="<%= config.siteName %>" style="max-height: 28px; width: auto; display: inline-block;">
+                    <% } else { %>
+                        <span style="font-weight: 500; letter-spacing: -0.5px;"><%= locals.config ? locals.config.siteName : 'LinkBoard' %></span>
+                    <% } %>
+                </a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                    <% if (locals.user) { %>
+                        <li class="<%= locals.page === 'home' ? 'active' : '' %>"><a href="/"><i class="fa fa-home"></i> Home</a></li>
+                        <li class="<%= locals.page === 'categories' ? 'active' : '' %>"><a href="/categories"><i class="fa fa-folder"></i> Categories</a></li>
+                    <% } %>
+                </ul>
+                
+                <% if (locals.user) { %>
+                    <form class="navbar-form navbar-left" action="/" method="GET" style="margin-left: 20px;">
+                        <div class="input-group input-group-sm" style="width: 200px;">
+                            <input type="text" name="q" class="form-control" placeholder="Search..." value="<%= locals.search || '' %>" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff;">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="submit" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.2); color: #fff;"><i class="fa fa-search"></i></button>
+                            </span>
+                        </div>
+                    </form>
+                <% } %>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <% if (locals.user) { %>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-user-circle"></i> <%= user %> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="/profile"><i class="fa fa-user"></i> My Profile</a></li>
+                                <li><a href="#" data-toggle="modal" data-target="#aboutModal"><i class="fa fa-info-circle"></i> About</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="/logout"><i class="fa fa-sign-out"></i> Logout</a></li>
+                            </ul>
+                        </li>
+                    <% } else { %>
+                        <li><a href="/login">Login</a></li>
+                        <li><a href="/register">Register</a></li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <% } %>
+
+    <!-- About Modal -->
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content" style="border-radius: 4px;">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">About LinkBoard</h4>
+                </div>
+                <div class="modal-body text-center">
+                    <h3 style="margin-top: 0; font-weight: bold;">LinkBoard</h3>
+                    <p class="text-muted">Version 1.2.0</p>
+                    <hr>
+                    <p>A minimalist, self-hosted bookmark manager built with Node.js and SQLite.</p>
+                    <p class="small text-muted">&copy; 2026 Dolt Enterprise</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-block" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>

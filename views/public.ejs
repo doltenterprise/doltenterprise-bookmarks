@@ -1,0 +1,77 @@
+<%- include('partials/header') %>
+
+<style>
+    .public-btn {
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+        padding: 15px 20px !important;
+        font-weight: 500 !important;
+        border-width: 2px !important;
+        transition: transform 0.2s;
+    }
+    .public-btn:hover { transform: scale(1.02); }
+    @media (max-width: 767px) {
+        .mobile-mt { margin-top: 40px !important; }
+    }
+</style>
+
+<div class="container-fluid" style="padding: 0 15px;">
+    <div class="row">
+        <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-4 col-md-offset-4 text-center">
+            
+            <div class="mobile-mt" style="margin-top: 80px; margin-bottom: 50px;">
+                <% if (locals.config && locals.config.logoUrl) { %>
+                    <img src="<%= config.logoUrl %>" alt="Logo" style="max-height: 80px; margin-bottom: 20px; border-radius: 8px;">
+                <% } %>
+                <h1 style="font-weight: bold; margin-bottom: 5px;"><%= category.name %></h1>
+                <p class="text-muted" style="font-size: 18px;">@<%= category.username %></p>
+            </div>
+
+            <div style="margin-bottom: 30px;">
+                <% 
+                    const socialDomains = ['twitter.com', 'x.com', 'instagram.com', 'facebook.com', 'linkedin.com', 'github.com', 'youtube.com', 'twitch.tv', 'discord.gg', 'discord.com', 'reddit.com', 'medium.com'];
+                    const socials = bookmarks.filter(b => socialDomains.some(domain => b.url.toLowerCase().includes(domain)));
+                    const regular = bookmarks.filter(b => !socialDomains.some(domain => b.url.toLowerCase().includes(domain)));
+                %>
+
+                <% regular.forEach(function(b) { %>
+                    <div style="margin-bottom: 15px;">
+                        <a href="<%= b.url %>" target="_blank" class="btn btn-default btn-block btn-lg public-btn">
+                            <%= b.title %>
+                        </a>
+                    </div>
+                <% }) %>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <% socials.forEach(function(s) { %>
+                    <% 
+                        let icon = 'fa-link';
+                        const url = s.url.toLowerCase();
+                        if (url.includes('twitter.com') || url.includes('x.com')) icon = 'fa-twitter';
+                        else if (url.includes('instagram.com')) icon = 'fa-instagram';
+                        else if (url.includes('facebook.com')) icon = 'fa-facebook';
+                        else if (url.includes('linkedin.com')) icon = 'fa-linkedin';
+                        else if (url.includes('github.com')) icon = 'fa-github';
+                        else if (url.includes('youtube.com')) icon = 'fa-youtube';
+                        else if (url.includes('twitch.tv')) icon = 'fa-twitch';
+                        else if (url.includes('discord')) icon = 'fa-comments';
+                        else if (url.includes('reddit')) icon = 'fa-reddit';
+                        else if (url.includes('medium')) icon = 'fa-medium';
+                    %>
+                    <a href="<%= s.url %>" target="_blank" class="btn btn-link btn-lg" style="color: #333;">
+                        <i class="fa <%= icon %> fa-2x"></i>
+                    </a>
+                <% }) %>
+            </div>
+
+            <div style="margin-top: 100px; margin-bottom: 50px;">
+                <p class="text-muted small">Powered by <a href="/" class="text-muted">LinkBoard</a></p>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

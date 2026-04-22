@@ -1,0 +1,42 @@
+{
+  "name": "dolt-enterprise-bookmarks",
+  "version": "1.0.0",
+  "description": "A self-hosted personal bookmarks manager built for speed and simplicity.",
+  "main": "app.js",
+  "bin": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "node --test",
+    "lint": "npx eslint .",
+    "build-sea": "node scripts/build-sea.js"
+  },
+  "keywords": [
+    "bookmarks",
+    "self-hosted",
+    "sqlite",
+    "dolt-enterprise",
+    "sea"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "connect-sqlite3": "^0.9.13",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "sql.js": "^1.10.3"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "eslint": "^10.2.1",
+    "nodemon": "^3.1.0",
+    "vitepress": "^1.6.4"
+  },
+  "overrides": {
+    "tar": "^6.2.1",
+    "@tootallnate/once": "^3.0.1"
+  }
+}

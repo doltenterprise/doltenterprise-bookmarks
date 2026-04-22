@@ -1,0 +1,60 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: node scripts/build-sea.js
+      
+      - name: Package Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: mv linkboard linkboard-linux-x64
+        
+      - name: Package macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          codesign --sign - linkboard
+          mv linkboard linkboard-darwin-arm64
+          
+      - name: Package Windows
+        if: matrix.os == 'windows-latest'
+        run: mv linkboard.exe linkboard-windows-x64.exe
+        
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.os }}
+          path: linkboard-*
+
+  create-release:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-binaries
+          merge-multiple: true
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-binaries/linkboard-*
+          generate_release_notes: true

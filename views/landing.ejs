@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <div class="text-center" style="margin-top: 80px; margin-bottom: 80px;">
+        <h1 style="font-weight: bold; font-size: 48px; margin-bottom: 20px;"><%= locals.config ? locals.config.siteName : 'LinkBoard' %></h1>
+        <p class="lead text-muted" style="font-size: 20px; max-width: 600px; margin: 0 auto 30px;">
+            <%= locals.config ? locals.config.siteDescription : 'A minimalist tool to organize your favorite links. No tracking, no ads, just your data on your own server.' %>
+        </p>
+        <p>
+            <a class="btn btn-primary btn-lg" href="/register" style="padding: 15px 30px; font-weight: bold;">Get started today &raquo;</a>
+            <a class="btn btn-default btn-lg" href="/login" style="padding: 15px 30px; margin-left: 10px;">Login</a>
+        </p>
+    </div>
+
+    <hr>
+
+    <div class="row" style="margin-top: 60px; margin-bottom: 60px;">
+        <div class="col-md-4">
+            <h3 style="font-weight: bold;"><span class="glyphicon glyphicon-folder-open text-muted"></span> Organize</h3>
+            <p class="text-muted">Group your bookmarks into categories with custom icons. Keep your dashboard clean and intuitive with zero configuration.</p>
+        </div>
+        <div class="col-md-4">
+            <h3 style="font-weight: bold;"><span class="glyphicon glyphicon-share-alt text-muted"></span> Share</h3>
+            <p class="text-muted">Create public landing pages for your collections. Share your favorite links with anyone via a unique public URL.</p>
+       </div>
+        <div class="col-md-4">
+            <h3 style="font-weight: bold;"><span class="glyphicon glyphicon-hdd text-muted"></span> Private</h3>
+            <p class="text-muted">LinkBoard is self-hosted. Your bookmarks are stored in a local SQLite database. You own your data completely.</p>
+        </div>
+    </div>
+
+    <div class="well text-center" style="padding: 40px; background: #fff; border-radius: 4px;">
+        <h3 style="margin-top: 0; font-weight: bold;">Download & Install</h3>
+        <p class="text-muted" style="margin-bottom: 25px;">LinkBoard is easy to deploy on any server running Node.js.</p>
+        <div class="btn-group">
+            <a href="#" class="btn btn-default"><span class="glyphicon glyphicon-download-alt"></span> ZIP</a>
+            <a href="#" class="btn btn-default"><span class="glyphicon glyphicon-console"></span> NPM</a>
+            <a href="#" class="btn btn-default"><span class="glyphicon glyphicon-hdd"></span> Docker</a>
+        </div>
+    </div>
+
+    <div style="margin-top: 100px; margin-bottom: 50px;" class="text-center">
+        <p class="text-muted small">&copy; 2026 Dolt Enterprise, Inc.</p>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

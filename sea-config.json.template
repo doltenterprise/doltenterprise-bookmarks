@@ -1,0 +1,17 @@
+{
+  "main": "bundle.js",
+  "output": "sea-prep.blob",
+  "disableSentinel": false,
+  "useCodeCache": true,
+  "assets": {
+    "views/index.ejs": "views/index.ejs",
+    "views/login.ejs": "views/login.ejs",
+    "views/register.ejs": "views/register.ejs",
+    "views/bookmark_form.ejs": "views/bookmark_form.ejs",
+    "views/categories.ejs": "views/categories.ejs",
+    "views/partials/header.ejs": "views/partials/header.ejs",
+    "views/partials/footer.ejs": "views/partials/footer.ejs",
+    "public/css/style.css": "public/css/style.css",
+    "public/js/main.js": "public/js/main.js"
+  }
+}

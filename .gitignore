@@ -1,0 +1,10 @@
+node_modules/
+*.sqlite
+dist/
+sea-prep.blob
+sea-config.json
+linkboard
+linkboard.exe
+bundle.js
+.env
+.DS_Store

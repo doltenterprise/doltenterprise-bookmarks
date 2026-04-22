@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup - LinkBoard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body { background-color: #f8f8f8; padding-top: 50px; }
+        .setup-container { max-width: 600px; margin: 0 auto; }
+        .panel { border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="container setup-container">
+    <div class="text-center" style="margin-bottom: 30px;">
+        <h1 style="font-weight: bold;">LinkBoard Setup</h1>
+        <p class="text-muted">Configure your self-hosted bookmark manager.</p>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Application Configuration</h3>
+        </div>
+        <div class="panel-body">
+            <% if (locals.error) { %>
+                <div class="alert alert-danger"><%= error %></div>
+            <% } %>
+            <form action="/setup" method="POST">
+                <h4>Database Settings</h4>
+                <hr>
+                <div class="form-group">
+                    <label>SQLite Database Path</label>
+                    <input type="text" name="databasePath" class="form-control" value="bookmarks.sqlite" required>
+                    <p class="help-block small">Relative to application root or absolute path.</p>
+                </div>
+
+                <h4 style="margin-top: 30px;">General Settings</h4>
+                <hr>
+                <div class="form-group">
+                    <label>Site Name</label>
+                    <input type="text" name="siteName" class="form-control" value="LinkBoard" required>
+                </div>
+                <div class="form-group">
+                    <label>Site Tagline</label>
+                    <input type="text" name="siteDescription" class="form-control" value="Simple, self-hosted bookmarks." required>
+                </div>
+
+                <h4 style="margin-top: 30px;">Admin Account</h4>
+                <hr>
+                <div class="form-group">
+                    <label>Admin Username</label>
+                    <input type="text" name="adminUsername" class="form-control" placeholder="admin" required>
+                </div>
+                <div class="form-group">
+                    <label>Admin Password</label>
+                    <input type="password" name="adminPassword" class="form-control" required>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">Install LinkBoard</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="text-center text-muted" style="margin-top: 30px; margin-bottom: 50px;">
+        <p class="small">&copy; 2026 Dolt Enterprise</p>
+    </div>
+</div>
+
+</body>
+</html>

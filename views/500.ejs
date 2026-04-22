@@ -1,0 +1,15 @@
+<%- include('partials/header', { hideNavbar: true }) %>
+
+<div class="container text-center" style="margin-top: 150px;">
+    <h1 style="font-size: 100px; font-weight: bold; color: #eee;">500</h1>
+    <h2 style="font-weight: bold;">Internal Server Error</h2>
+    <p class="text-muted" style="margin-bottom: 30px;">Something went wrong on our end. We're working on fixing it.</p>
+    <% if (locals.error && process.env.NODE_ENV === 'development') { %>
+        <div class="well text-left" style="max-width: 800px; margin: 0 auto; overflow: auto;">
+            <code><%= error %></code>
+        </div>
+    <% } %>
+    <a href="/" class="btn btn-primary btn-lg" style="margin-top: 20px;">Try Again</a>
+</div>
+
+<%- include('partials/footer') %>

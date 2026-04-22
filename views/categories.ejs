@@ -1,0 +1,170 @@
+<%- include('partials/header', { page: 'categories' }) %>
+
+<div class="container">
+    <div class="row" style="margin-bottom: 30px;">
+        <div class="col-xs-6">
+            <h2 style="margin: 0; font-weight: bold;">Categories</h2>
+        </div>
+        <div class="col-xs-6 text-right">
+            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#addCategoryModal"><i class="fa fa-plus"></i> New Category</button>
+        </div>
+    </div>
+
+    <% if (categories.length === 0) { %>
+        <div class="well text-center" style="padding: 80px 20px; background: #fff; border-style: dashed; border-width: 2px;">
+            <span class="glyphicon glyphicon-tags text-muted" style="font-size: 48px; margin-bottom: 20px;"></span>
+            <h3>No categories yet</h3>
+            <p class="text-muted" style="margin-bottom: 25px;">Create your first category to start organizing your bookmarks.</p>
+            <button class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">Create Category</button>
+        </div>
+    <% } else { %>
+        <div class="panel panel-default" style="border-radius: 4px;">
+            <div class="panel-body" style="padding: 0;">
+                <table class="table" style="margin-bottom: 0;">
+                    <thead>
+                        <tr>
+                            <th style="padding-left: 15px;">Name</th>
+                            <th>Public Link</th>
+                            <th class="text-right" style="padding-right: 15px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% categories.forEach(function(cat) { %>
+                            <tr>
+                                <td style="padding-left: 15px;">
+                                    <span class="glyphicon <%= cat.icon || 'glyphicon-folder-open' %> text-muted" style="margin-right: 8px;"></span>
+                                    <%= cat.name %>
+                                </td>
+                                <td>
+                                    <% if (cat.public_slug) { %>
+                                        <a href="/p/<%= cat.public_slug %>" target="_blank" class="small">/p/<%= cat.public_slug %></a>
+                                        <button class="btn btn-link btn-xs edit-slug-btn" data-id="<%= cat.id %>" data-slug="<%= cat.public_slug %>" title="Edit Slug">
+                                            <i class="fa fa-pencil text-muted"></i>
+                                        </button>
+                                    <% } else { %>
+                                        <span class="text-muted small">Private</span>
+                                    <% } %>
+                                </td>
+                                <td class="text-right" style="padding-right: 15px;">
+                                    <form action="/categories/public/<%= cat.id %>" method="POST" style="display:inline;">
+                                        <button type="submit" class="btn btn-link btn-xs">
+                                            <%= cat.public_slug ? 'Disable' : 'Share' %>
+                                        </button>
+                                    </form>
+                                    <form action="/categories/delete/<%= cat.id %>" method="POST" style="display:inline; margin-left: 5px;">
+                                        <button type="submit" class="btn btn-link btn-xs text-danger" style="color: #d9534f;">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" style="border-radius: 4px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">New Category</h4>
+            </div>
+            <form action="/categories" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control" placeholder="e.g. Work, Research" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Icon</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><span id="selected-icon-preview" class="glyphicon glyphicon-folder-open"></span></span>
+                            <input type="text" name="icon" id="category-icon-input" class="form-control" value="glyphicon-folder-open" readonly>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" data-toggle="modal" data-target="#iconPickerModal">Select</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Icon Picker Modal -->
+<div class="modal fade" id="iconPickerModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 4px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Select Icon</h4>
+            </div>
+            <div class="modal-body" style="max-height: 400px; overflow-y: auto;">
+                <div class="row text-center">
+                    <% 
+                        const icons = [
+                            'glyphicon-folder-open', 'glyphicon-folder-close', 'glyphicon-star', 'glyphicon-heart', 'glyphicon-home',
+                            'glyphicon-user', 'glyphicon-search', 'glyphicon-envelope', 'glyphicon-music', 'glyphicon-film',
+                            'glyphicon-glass', 'glyphicon-camera', 'glyphicon-picture', 'glyphicon-pencil', 'glyphicon-map-marker',
+                            'glyphicon-adjust', 'glyphicon-tint', 'glyphicon-edit', 'glyphicon-share', 'glyphicon-check',
+                            'glyphicon-plus', 'glyphicon-minus', 'glyphicon-remove', 'glyphicon-ok', 'glyphicon-question-sign',
+                            'glyphicon-info-sign', 'glyphicon-exclamation-sign', 'glyphicon-gift', 'glyphicon-leaf', 'glyphicon-fire',
+                            'glyphicon-eye-open', 'glyphicon-eye-close', 'glyphicon-warning-sign', 'glyphicon-plane', 'glyphicon-calendar',
+                            'glyphicon-comment', 'glyphicon-magnet', 'glyphicon-shopping-cart', 'glyphicon-hdd', 'glyphicon-bell',
+                            'glyphicon-globe', 'glyphicon-wrench', 'glyphicon-tasks', 'glyphicon-filter', 'glyphicon-briefcase',
+                            'glyphicon-dashboard', 'glyphicon-paperclip', 'glyphicon-link', 'glyphicon-phone', 'glyphicon-pushpin',
+                            'glyphicon-usd', 'glyphicon-stats', 'glyphicon-cloud', 'glyphicon-send', 'glyphicon-floppy-disk',
+                            'glyphicon-credit-card', 'glyphicon-transfer', 'glyphicon-cutlery', 'glyphicon-tower', 'glyphicon-tree-conifer',
+                            'glyphicon-apple', 'glyphicon-hourglass', 'glyphicon-lamp', 'glyphicon-duplicate', 'glyphicon-scissors',
+                            'glyphicon-bitcoin', 'glyphicon-education', 'glyphicon-menu-hamburger'
+                        ];
+                    %>
+                    <% icons.forEach(function(icon) { %>
+                        <div class="col-xs-2" style="margin-bottom: 15px;">
+                            <button type="button" class="btn btn-default btn-block select-icon-btn" data-icon="<%= icon %>" title="<%= icon %>" style="padding: 10px 0;">
+                                <span class="glyphicon <%= icon %>"></span>
+                            </button>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<!-- Edit Slug Modal -->
+<div class="modal fade" id="editSlugModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" style="border-radius: 4px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Custom Public Slug</h4>
+            </div>
+            <form id="edit-slug-form" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Public URL</label>
+                        <div class="input-group">
+                            <span class="input-group-addon">/p/</span>
+                            <input type="text" name="slug" id="custom-slug-input" class="form-control" placeholder="my-links" required>
+                        </div>
+                        <p id="slug-feedback" class="help-block small"></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" id="save-slug-btn" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

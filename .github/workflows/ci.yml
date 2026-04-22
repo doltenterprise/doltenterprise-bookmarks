@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ "*" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: npx eslint .
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20, 22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - run: npm ci
+      - name: Run tests
+        run: |
+          node -e "const app = require('./app'); if (typeof app !== 'function') throw new Error('App failed to export'); console.log('Connectivity test passed');"
+
+  build-sea:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+      - run: npm ci
+      - run: node scripts/build-sea.js
+      - name: Rename Binary
+        run: mv linkboard linkboard-linux-x64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linkboard-linux-x64
+          path: linkboard-linux-x64

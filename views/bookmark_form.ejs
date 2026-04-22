@@ -1,0 +1,50 @@
+<%- include('partials/header') %>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><%= title %></h3>
+                </div>
+                <div class="panel-body">
+                    <form action="<%= bookmark.id ? '/bookmarks/edit/' + bookmark.id : '/bookmarks' %>" method="POST">
+                        <div class="form-group">
+                            <label>URL</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-link"></i></span>
+                                <input type="url" name="url" class="form-control" value="<%= bookmark.url || '' %>" placeholder="https://example.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" name="title" class="form-control" value="<%= bookmark.title || '' %>" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea name="description" class="form-control" rows="3"><%= bookmark.description || '' %></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select name="category_id" class="form-control">
+                                <option value="">None</option>
+                                <% categories.forEach(function(cat) { %>
+                                    <option value="<%= cat.id %>" <%= bookmark.category_id == cat.id ? 'selected' : '' %>><%= cat.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tags (comma separated)</label>
+                            <input type="text" name="tags" class="form-control" value="<%= bookmark.tags || '' %>" placeholder="work, research, hobby">
+                        </div>
+                        <hr>
+                        <button type="submit" class="btn btn-primary">Save Bookmark</button>
+                        <a href="/" class="btn btn-default">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

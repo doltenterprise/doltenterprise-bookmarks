@@ -1,0 +1,219 @@
+<%- include('partials/header', { page: 'home' }) %>
+
+<div class="container">
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="col-xs-6">
+            <h2 style="margin: 0; font-weight: bold;">Bookmarks</h2>
+        </div>
+        <div class="col-xs-6 text-right">
+            <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#addBookmarkModal"><i class="fa fa-plus"></i> Add Bookmark</button>
+        </div>
+    </div>
+
+    <% grouped.forEach(function(group) { %>
+        <% if (group.bookmarks.length > 0) { %>
+            <div class="category-section">
+                <h3 class="category-header">
+                    <span class="glyphicon <%= group.icon || 'glyphicon-folder-open' %> text-muted" style="margin-right: 8px;"></span>
+                    <%= group.name %>
+                </h3>
+                <div class="list-group">
+                    <% group.bookmarks.forEach(function(b) { %>
+                        <div class="list-group-item">
+                            <div class="row">
+                                <div class="col-sm-9">
+                                    <h4 class="list-group-item-heading" style="margin-bottom: 5px;">
+                                        <img src="https://www.google.com/s2/favicons?domain=<%= b.url %>&sz=32" class="favicon" alt="">
+                                        <a href="<%= b.url %>" target="_blank" style="color: #333; font-weight: 500;"><%= b.title %></a>
+                                    </h4>
+                                    <p class="list-group-item-text text-muted small"><%= b.description %></p>
+                                    <div style="margin-top: 5px;">
+                                        <% if (b.tags) { %>
+                                            <% b.tags.split(',').forEach(function(tag) { %>
+                                                <span class="tag-label"><%= tag.trim() %></span>
+                                            <% }) %>
+                                        <% } %>
+                                    </div>
+                                </div>
+                                <div class="col-sm-3 text-right">
+                                    <div class="btn-group">
+                                        <button class="btn btn-link btn-xs edit-bookmark-btn" 
+                                           data-id="<%= b.id %>" 
+                                           data-title="<%= b.title %>" 
+                                           data-url="<%= b.url %>" 
+                                           data-description="<%= b.description %>" 
+                                           data-tags="<%= b.tags %>" 
+                                           data-category="<%= b.category_id %>"
+                                           data-toggle="modal" data-target="#editBookmarkModal">Edit</button>
+                                        <form action="/bookmarks/delete/<%= b.id %>" method="POST" style="display:inline;">
+                                            <button type="submit" class="btn btn-link btn-xs text-danger" style="color: #d9534f;">Delete</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
+    <% }) %>
+
+    <% if (uncategorized.length > 0) { %>
+        <div class="category-section">
+            <h3 class="category-header">
+                <span class="glyphicon glyphicon-folder-close text-muted" style="margin-right: 8px;"></span>
+                Uncategorized
+            </h3>
+            <div class="list-group">
+                <% uncategorized.forEach(function(b) { %>
+                    <div class="list-group-item">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <h4 class="list-group-item-heading" style="margin-bottom: 5px;">
+                                    <img src="https://www.google.com/s2/favicons?domain=<%= b.url %>&sz=32" class="favicon" alt="">
+                                    <a href="<%= b.url %>" target="_blank" style="color: #333; font-weight: 500;"><%= b.title %></a>
+                                </h4>
+                                <p class="list-group-item-text text-muted small"><%= b.description %></p>
+                            </div>
+                            <div class="col-sm-3 text-right">
+                                <button class="btn btn-link btn-xs edit-bookmark-btn" 
+                                   data-id="<%= b.id %>" 
+                                   data-title="<%= b.title %>" 
+                                   data-url="<%= b.url %>" 
+                                   data-description="<%= b.description %>" 
+                                   data-tags="<%= b.tags %>" 
+                                   data-toggle="modal" data-target="#editBookmarkModal">Edit</button>
+                                <form action="/bookmarks/delete/<%= b.id %>" method="POST" style="display:inline;">
+                                    <button type="submit" class="btn btn-link btn-xs text-danger" style="color: #d9534f;">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    <% } %>
+
+    <% if (grouped.every(g => g.bookmarks.length === 0) && uncategorized.length === 0) { %>
+        <div class="text-center" style="margin-top: 100px;">
+            <h3 class="text-muted">No bookmarks found</h3>
+            <p><button class="btn btn-primary" data-toggle="modal" data-target="#addBookmarkModal">Add your first bookmark</button></p>
+        </div>
+    <% } %>
+</div>
+
+<!-- Add Bookmark Modal -->
+<div class="modal fade" id="addBookmarkModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 4px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Add Bookmark</h4>
+            </div>
+            <form action="/bookmarks" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="url" name="url" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="title" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category_id" class="form-control">
+                            <option value="">None</option>
+                            <% grouped.forEach(function(cat) { %>
+                                <option value="<%= cat.id %>"><%= cat.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <input type="text" name="tags" class="form-control" placeholder="comma separated">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Bookmark Modal -->
+<div class="modal fade" id="editBookmarkModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 4px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Edit Bookmark</h4>
+            </div>
+            <form id="editBookmarkForm" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>URL</label>
+                        <input type="url" name="url" id="edit-url" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="title" id="edit-title" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" id="edit-description" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select name="category_id" id="edit-category" class="form-control">
+                            <option value="">None</option>
+                            <% grouped.forEach(function(cat) { %>
+                                <option value="<%= cat.id %>"><%= cat.name %></option>
+                            <% }) %>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags</label>
+                        <input type="text" name="tags" id="edit-tags" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 4px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Add Category</h4>
+            </div>
+            <form action="/categories" method="POST">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

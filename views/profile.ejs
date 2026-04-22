@@ -1,0 +1,287 @@
+<%- include('partials/header', { page: 'profile' }) %>
+
+<style>
+    .settings-sidebar .list-group-item {
+        border: none;
+        padding: 12px 20px;
+        font-weight: 500;
+        color: #666;
+        border-radius: 0 !important;
+        margin-bottom: 2px;
+        transition: all 0.2s;
+    }
+    .settings-sidebar .list-group-item:hover {
+        background: #f8f9fa;
+        color: #333;
+    }
+    .settings-sidebar .list-group-item.active {
+        background: #f0f4f8;
+        color: #2c3e50;
+        border-right: 3px solid #2c3e50;
+    }
+    .settings-sidebar .list-group-item i {
+        margin-right: 12px;
+        width: 20px;
+        text-align: center;
+    }
+    .settings-card {
+        background: #fff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        margin-bottom: 40px;
+    }
+    .settings-section-title {
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 12px;
+        letter-spacing: 1.5px;
+        color: #999;
+        margin-bottom: 30px;
+        display: block;
+    }
+    .table-v-middle td {
+        vertical-align: middle !important;
+    }
+    /* Hide all sections by default for tabbed interface */
+    .settings-card {
+        display: none;
+    }
+    /* Show only the active section */
+    #general {
+        display: block;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        <!-- Sidebar Navigation -->
+        <div class="col-md-3">
+            <div class="settings-sidebar" style="position: sticky; top: 90px; margin-bottom: 30px;">
+                <h3 style="font-weight: 300; margin-top: 0; margin-bottom: 30px; padding-left: 20px;">Settings</h3>
+                <div class="list-group">
+                    <a href="#general" class="list-group-item active"><i class="fa fa-user-circle"></i> General</a>
+                    <a href="#config" class="list-group-item"><i class="fa fa-cog"></i> Configuration</a>
+                    <% if (isAdmin) { %>
+                    <a href="#users" class="list-group-item"><i class="fa fa-users"></i> User Management</a>
+                    <% } %>
+                </div>
+                <hr style="margin: 20px 20px;">
+                <a href="/logout" class="list-group-item text-danger"><i class="fa fa-sign-out"></i> Logout</a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="col-md-9">
+            <!-- General Section -->
+            <div id="general" class="settings-card">
+                <span class="settings-section-title">General Information</span>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div style="display: flex; align-items: center; margin-bottom: 30px;">
+                            <div style="width: 60px; height: 60px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #999; margin-right: 20px;">
+                                <i class="fa fa-user"></i>
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; font-weight: bold;"><%= user %></h4>
+                                <p class="text-muted" style="margin: 0;"><%= isAdmin ? 'System Administrator' : 'Standard User' %></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 text-right">
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+                            <p style="margin-bottom: 5px; font-size: 12px; color: #888;">Activity</p>
+                            <p style="margin: 0; font-weight: bold;"><%= stats.bookmarks %> Bookmarks</p>
+                            <p style="margin: 0; font-weight: bold;"><%= stats.categories %> Categories</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuration Section -->
+            <div id="config" class="settings-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                    <span class="settings-section-title" style="margin-bottom: 0;">System Configuration</span>
+                    <% if (isAdmin) { %>
+                    <button class="btn btn-default btn-sm" data-toggle="modal" data-target="#editConfigModal">
+                        <i class="fa fa-pencil"></i> Edit Site Details
+                    </button>
+                    <% } %>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div style="margin-bottom: 25px;">
+                            <label class="small text-muted" style="font-weight: normal;">Site Name</label>
+                            <p style="font-size: 16px; font-weight: 500;"><%= config.siteName %></p>
+                        </div>
+                        <div>
+                            <label class="small text-muted" style="font-weight: normal;">Database Storage</label>
+                            <p style="font-size: 13px; font-family: monospace; word-break: break-all;"><%= config.databasePath %></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="margin-bottom: 25px;">
+                            <label class="small text-muted" style="font-weight: normal;">Description</label>
+                            <p style="font-size: 14px; line-height: 1.6;"><%= config.siteDescription %></p>
+                        </div>
+                        <div>
+                            <label class="small text-muted" style="font-weight: normal;">Branding Logo</label>
+                            <% if (config.logoUrl) { %>
+                                <div style="display: flex; align-items: center; background: #fcfcfc; padding: 10px; border: 1px solid #eee; border-radius: 4px;">
+                                    <img src="<%= config.logoUrl %>" style="max-height: 30px; margin-right: 15px;">
+                                    <span class="text-muted small" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"><%= config.logoUrl %></span>
+                                </div>
+                            <% } else { %>
+                                <p class="text-muted italic">No logo configured</p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <% if (isAdmin) { %>
+            <!-- User Management Section -->
+            <div id="users" class="settings-card">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px;">
+                    <span class="settings-section-title" style="margin-bottom: 0;">User Management</span>
+                    <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addUserModal">
+                        <i class="fa fa-plus"></i> Add New User
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-v-middle" style="font-size: 14px;">
+                        <thead>
+                            <tr>
+                                <th style="border-top: none;">User</th>
+                                <th style="border-top: none;">Access Level</th>
+                                <th style="border-top: none;" class="text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach(function(u) { %>
+                            <tr>
+                                <td>
+                                    <div style="display: flex; align-items: center;">
+                                        <div style="width: 32px; height: 32px; background: #f0f0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px; color: #999;">
+                                            <i class="fa fa-user"></i>
+                                        </div>
+                                        <span style="font-weight: 500;"><%= u.username %></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="label <%= u.is_admin ? 'label-primary' : 'label-default' %>" style="padding: 4px 8px; font-weight: normal; border-radius: 12px;">
+                                        <%= u.is_admin ? 'Administrator' : 'User' %>
+                                    </span>
+                                </td>
+                                <td class="text-right">
+                                    <div class="btn-group">
+                                        <form action="/users/toggle-admin/<%= u.id %>" method="POST" style="display: inline;">
+                                            <button type="submit" class="btn btn-link btn-xs" title="Toggle Permissions" <%= (u.username === user) ? 'disabled' : '' %>>
+                                                <i class="fa <%= u.is_admin ? 'fa-angle-double-down' : 'fa-angle-double-up' %>" style="font-size: 16px;"></i>
+                                            </button>
+                                        </form>
+                                        <form action="/users/delete/<%= u.id %>" method="POST" style="display: inline;" onsubmit="return confirm('Delete this user account? This action cannot be undone.')">
+                                            <button type="submit" class="btn btn-link btn-xs text-danger" title="Remove User" <%= (u.username === user) ? 'disabled' : '' %>>
+                                                <i class="fa fa-trash-o" style="font-size: 16px;"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<!-- Add User Modal -->
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <form action="/users/add" method="POST">
+                <div class="modal-header" style="border-bottom: none; padding: 25px 25px 0;">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title" style="font-weight: bold;">New Account</h4>
+                </div>
+                <div class="modal-body" style="padding: 25px;">
+                    <div class="form-group">
+                        <label class="small text-uppercase" style="letter-spacing: 1px; color: #999;">Username</label>
+                        <input type="text" name="username" class="form-control" required style="border-radius: 6px; height: 40px;">
+                    </div>
+                    <div class="form-group">
+                        <label class="small text-uppercase" style="letter-spacing: 1px; color: #999;">Password</label>
+                        <input type="password" name="password" class="form-control" required style="border-radius: 6px; height: 40px;">
+                    </div>
+                    <div class="checkbox">
+                        <label style="font-weight: normal;">
+                            <input type="checkbox" name="is_admin"> Grant Administrator Access
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: none; padding: 0 25px 25px;">
+                    <button type="submit" class="btn btn-primary btn-block" style="height: 40px; font-weight: bold;">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Config Modal -->
+<div class="modal fade" id="editConfigModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="border-radius: 12px; border: none; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+            <form action="/config/update" method="POST">
+                <div class="modal-header" style="border-bottom: none; padding: 25px 25px 0;">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title" style="font-weight: bold;">Site Settings</h4>
+                </div>
+                <div class="modal-body" style="padding: 25px;">
+                    <div class="form-group">
+                        <label class="small text-uppercase" style="letter-spacing: 1px; color: #999;">Site Name</label>
+                        <input type="text" name="siteName" class="form-control" value="<%= config.siteName %>" required style="border-radius: 6px; height: 40px;">
+                    </div>
+                    <div class="form-group">
+                        <label class="small text-uppercase" style="letter-spacing: 1px; color: #999;">Site Description</label>
+                        <textarea name="siteDescription" class="form-control" rows="3" style="border-radius: 6px; resize: none;"><%= config.siteDescription %></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="small text-uppercase" style="letter-spacing: 1px; color: #999;">Organization Logo URL</label>
+                        <input type="url" name="logoUrl" class="form-control" value="<%= config.logoUrl %>" placeholder="https://example.com/logo.png" style="border-radius: 6px; height: 40px;">
+                        <p class="help-block small" style="margin-top: 10px;">Displayed in navbar and public pages.</p>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: none; padding: 0 25px 25px;">
+                    <button type="submit" class="btn btn-primary" style="padding: 10px 25px; font-weight: bold;">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('a.list-group-item').on('click', function(event) {
+            if (this.hash !== "") {
+                event.preventDefault();
+                var hash = this.hash;
+                
+                // Only act on settings cards, not logout
+                if ($(hash).length) {
+                    $('.settings-card').hide();
+                    $(hash).fadeIn(200);
+                    
+                    $('a.list-group-item').removeClass('active');
+                    $(this).addClass('active');
+                }
+            }
+        });
+    });
+</script>
+
+<%- include('partials/footer') %>

@@ -1,0 +1,7 @@
+{
+  "isSetup": true,
+  "siteName": "Dolt Enterprise Bookmarks",
+  "siteDescription": "Simple, self-hosted bookmarks site for Dolt Enterprise",
+  "databasePath": "D:\\PROD\\linktree\\bookmarks.sqlite",
+  "logoUrl": "https://doltlabs.in/images/dolt-labs-logotype-color.png"
+}
